@@ -1,0 +1,245 @@
+.my-tickets {
+  min-height: calc(100vh - 80px);
+  padding: 40px 0;
+}
+
+.page-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 32px;
+}
+
+.no-tickets {
+  text-align: center;
+  padding: 80px 20px;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 245, 212, 0.1);
+  border: 1px solid var(--border);
+}
+
+.no-tickets-icon {
+  font-size: 80px;
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+.no-tickets h2 {
+  font-size: 28px;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.no-tickets p {
+  color: var(--text-light);
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.tickets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  gap: 24px;
+}
+
+.ticket-card {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 245, 212, 0.15);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border);
+}
+
+.ticket-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 245, 212, 0.25);
+  transform: translateY(-4px);
+  border-color: var(--primary);
+}
+
+.ticket-header {
+  padding: 24px;
+  background: linear-gradient(135deg, #00F5D4 0%, #7C3AED 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(0, 245, 212, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.ticket-event-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+}
+
+.ticket-status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ticket-status i {
+  font-size: 14px;
+}
+
+.ticket-status.valid {
+  background: rgba(45, 212, 191, 0.2);
+  color: var(--success);
+  border: 2px solid rgba(45, 212, 191, 0.4);
+}
+
+.ticket-status.used {
+  background: rgba(244, 63, 94, 0.2);
+  color: var(--error);
+  border: 2px solid rgba(244, 63, 94, 0.4);
+}
+
+.ticket-divider {
+  height: 2px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--border) 0,
+    var(--border) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  margin: 0 24px;
+}
+
+.ticket-body {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+
+.ticket-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticket-info-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ticket-info-label {
+  color: var(--text-light);
+  font-size: 14px;
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticket-info-label i {
+  color: var(--primary);
+  width: 16px;
+}
+
+.ticket-info-value {
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ticket-qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.qr-code-wrapper {
+  padding: 12px;
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+}
+
+.ticket-id {
+  text-align: center;
+}
+
+.ticket-id small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.ticket-id code {
+  display: block;
+  font-size: 10px;
+  color: var(--text-dark);
+  background: var(--background);
+  padding: 4px 8px;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.ticket-footer {
+  padding: 20px 24px;
+  background: var(--background);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.ticket-booked-date {
+  color: var(--text-light);
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .tickets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-body {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-qr-section {
+    order: -1;
+  }
+
+  .ticket-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-small {
+    width: 100%;
+  }
+}

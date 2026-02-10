@@ -1,0 +1,204 @@
+.manage-events {
+  min-height: calc(100vh - 80px);
+  padding: 40px 0;
+}
+
+.manage-events-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.no-events-manage {
+  text-align: center;
+  padding: 80px 20px;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 245, 212, 0.1);
+  border: 1px solid var(--border);
+}
+
+.no-events-manage h2 {
+  font-size: 24px;
+  color: var(--text-dark);
+  margin: 20px 0 12px;
+}
+
+.no-events-manage p {
+  color: var(--text-light);
+  margin-bottom: 24px;
+}
+
+.events-table-wrapper {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 245, 212, 0.1);
+  overflow-x: auto;
+  border: 1px solid var(--border);
+}
+
+.events-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.events-table thead {
+  background: var(--light);
+}
+
+.events-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+
+.events-table td {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dark);
+  vertical-align: middle;
+}
+
+.events-table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.events-table tbody tr:hover {
+  background: var(--light);
+}
+
+.event-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.event-thumb {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.event-title-cell {
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.event-desc-cell {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.date-cell,
+.location-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.date-cell i,
+.location-cell i {
+  color: var(--primary);
+  font-size: 12px;
+}
+
+.price-cell {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 16px;
+}
+
+.tickets-cell span {
+  padding: 4px 12px;
+  background: rgba(45, 212, 191, 0.2);
+  color: var(--success);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.tickets-cell span.sold-out {
+  background: rgba(250, 204, 21, 0.2);
+  color: var(--warning);
+}
+
+.category-badge {
+  padding: 4px 12px;
+  background: rgba(0, 245, 212, 0.15);
+  color: var(--primary);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(0, 245, 212, 0.3);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.btn-edit {
+  background: rgba(0, 245, 212, 0.15);
+  color: var(--primary);
+  border: 1px solid rgba(0, 245, 212, 0.3);
+}
+
+.btn-edit:hover {
+  background: var(--primary);
+  color: var(--dark);
+  box-shadow: 0 0 12px rgba(0, 245, 212, 0.5);
+}
+
+.btn-delete {
+  background: rgba(244, 63, 94, 0.15);
+  color: var(--error);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.btn-delete:hover {
+  background: var(--error);
+  color: white;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.5);
+}
+
+@media (max-width: 768px) {
+  .manage-events-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .manage-events-header .btn {
+    width: 100%;
+  }
+
+  .events-table-wrapper {
+    overflow-x: scroll;
+  }
+}
