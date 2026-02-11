@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../config/firebase/firebaseconfig';
+import { db, storage } from '../config/firebase/firebaseconfig';
 import { collection, addDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './CreateEvent.css';
 
 const CreateEvent = () => {
@@ -18,8 +19,9 @@ const CreateEvent = () => {
     price: '',
     totalTickets: '',
     category: 'Technology',
-    image: ''
+    image: null
   });
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -28,17 +30,39 @@ const CreateEvent = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({
+        ...formData,
+        image: file
+      });
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.title || !formData.description || !formData.date || !formData.time || 
-        !formData.location || !formData.price || !formData.totalTickets) {
-      alert('Please fill in all required fields');
+        !formData.location || !formData.price || !formData.totalTickets || !formData.image) {
+      alert('Please fill in all required fields including event image');
       return;
     }
 
     try {
       setLoading(true);
+
+      // Upload image to Firebase Storage
+      const imageRef = ref(storage, `event-images/${Date.now()}-${formData.image.name}`);
+      const imageSnapshot = await uploadBytes(imageRef, formData.image);
+      const imageUrl = await getDownloadURL(imageSnapshot.ref);
 
       const eventData = {
         title: formData.title,
@@ -50,7 +74,7 @@ const CreateEvent = () => {
         totalTickets: parseInt(formData.totalTickets),
         availableTickets: parseInt(formData.totalTickets),
         category: formData.category,
-        image: formData.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+        image: imageUrl,
         createdAt: new Date().toISOString()
       };
 
@@ -213,19 +237,30 @@ const CreateEvent = () => {
               </select>
             </div>
 
-            <div className="form-group">
+            <div className="form-group full-width">
               <label>
-                <i className="fas fa-image"></i> Image URL (Optional)
+                <i className="fas fa-image"></i> Event Image *
               </label>
               <input
-                type="url"
+                type="file"
                 name="image"
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
+                onChange={handleImageChange}
+                accept="image/*"
                 className="form-input"
+                required
               />
-              <small className="form-hint">Leave empty for default image</small>
+              {imagePreview && (
+                <div className="image-preview">
+                  <img src={imagePreview} alt="Event preview" style={{
+                    width: '200px',
+                    height: '120px',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    marginTop: '10px'
+                  }} />
+                </div>
+              )}
+              <small className="form-hint">Upload an image for your event (required)</small>
             </div>
           </div>
 

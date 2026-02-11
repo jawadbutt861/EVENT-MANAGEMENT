@@ -1,9 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../config/firebase/firebaseconfig';
+import { db, storage } from '../config/firebase/firebaseconfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './CreateEvent.css';
 
 const EditEvent = () => {
@@ -21,8 +21,10 @@ const EditEvent = () => {
     price: '',
     totalTickets: '',
     category: 'Technology',
-    image: ''
+    image: '',
+    newImage: null
   });
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     fetchEvent();
@@ -42,8 +44,10 @@ const EditEvent = () => {
           price: data.price.toString(),
           totalTickets: data.totalTickets.toString(),
           category: data.category,
-          image: data.image || ''
+          image: data.image || '',
+          newImage: null
         });
+        setImagePreview(data.image || null);
       } else {
         alert('Event not found');
         navigate('/dashboard');
@@ -63,6 +67,23 @@ const EditEvent = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({
+        ...formData,
+        newImage: file
+      });
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -75,6 +96,15 @@ const EditEvent = () => {
     try {
       setLoading(true);
 
+      let imageUrl = formData.image; // Keep existing image by default
+
+      // If new image is uploaded, upload it to Firebase Storage
+      if (formData.newImage) {
+        const imageRef = ref(storage, `event-images/${Date.now()}-${formData.newImage.name}`);
+        const imageSnapshot = await uploadBytes(imageRef, formData.newImage);
+        imageUrl = await getDownloadURL(imageSnapshot.ref);
+      }
+
       const eventData = {
         title: formData.title,
         description: formData.description,
@@ -84,7 +114,7 @@ const EditEvent = () => {
         price: parseInt(formData.price),
         totalTickets: parseInt(formData.totalTickets),
         category: formData.category,
-        image: formData.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+        image: imageUrl,
         updatedAt: new Date().toISOString()
       };
 
@@ -255,19 +285,29 @@ const EditEvent = () => {
               </select>
             </div>
 
-            <div className="form-group">
+            <div className="form-group full-width">
               <label>
-                <i className="fas fa-image"></i> Image URL (Optional)
+                <i className="fas fa-image"></i> Event Image
               </label>
               <input
-                type="url"
-                name="image"
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
+                type="file"
+                name="newImage"
+                onChange={handleImageChange}
+                accept="image/*"
                 className="form-input"
               />
-              <small className="form-hint">Leave empty for default image</small>
+              {imagePreview && (
+                <div className="image-preview">
+                  <img src={imagePreview} alt="Event preview" style={{
+                    width: '200px',
+                    height: '120px',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    marginTop: '10px'
+                  }} />
+                </div>
+              )}
+              <small className="form-hint">Upload a new image to replace the current one (optional)</small>
             </div>
           </div>
 
