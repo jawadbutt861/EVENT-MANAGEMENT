@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { db } from '../config/firebase/firebaseconfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { uploadToCloudinary } from '../config/cloudinary';
@@ -26,11 +26,7 @@ const EditEvent = () => {
   });
   const [imagePreview, setImagePreview] = useState(null);
 
-  useEffect(() => {
-    fetchEvent();
-  }, [id]);
-
-  const fetchEvent = async () => {
+  const fetchEvent = useCallback(async () => {
     try {
       const eventDoc = await getDoc(doc(db, 'events', id));
       if (eventDoc.exists()) {
@@ -58,7 +54,11 @@ const EditEvent = () => {
     } finally {
       setFetchingEvent(false);
     }
-  };
+  }, [id, navigate]);
+
+  useEffect(() => {
+    fetchEvent();
+  }, [fetchEvent]);
 
   const handleChange = (e) => {
     setFormData({

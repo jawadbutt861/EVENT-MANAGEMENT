@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { db } from '../config/firebase/firebaseconfig';
 import { collection, getDocs, deleteDoc, doc, query, where } from 'firebase/firestore';
 import './ManageEvents.css';

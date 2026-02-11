@@ -2,10 +2,9 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { db } from '../config/firebase/firebaseconfig';
 import { collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore';
-import { eventsData } from '../data/events';
 import './Dashboard.css';
 
 const Dashboard = () => {

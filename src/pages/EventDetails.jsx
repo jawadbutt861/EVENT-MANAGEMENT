@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { eventsData } from '../data/events';
+import { useAuth } from '../hooks/useAuth';
 import { db } from '../config/firebase/firebaseconfig';
 import { collection, addDoc, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import './EventDetails.css';
@@ -96,7 +94,7 @@ const EventDetails = () => {
     try {
       setLoading(true);
       
-      const ticketId = `TICKET-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const ticketId = `TICKET-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
       
       await addDoc(collection(db, 'bookings'), {
         userId: currentUser.uid,
