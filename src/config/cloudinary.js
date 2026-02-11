@@ -18,12 +18,18 @@ export const uploadToCloudinary = async (file) => {
       `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
       {
         method: 'POST',
-        body: formData
+        body: formData,
+        mode: 'cors', // Enable CORS
+        headers: {
+          'Accept': 'application/json'
+        }
       }
     );
 
     if (!response.ok) {
-      throw new Error('Failed to upload image');
+      const errorData = await response.json();
+      console.error('Cloudinary error:', errorData);
+      throw new Error(`Failed to upload image: ${errorData.error?.message || 'Unknown error'}`);
     }
 
     const data = await response.json();

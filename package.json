@@ -12,6 +12,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.1.0",
     "cloudinary": "^2.9.0",
+    "cors": "^2.8.6",
     "firebase": "^12.9.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.0",
