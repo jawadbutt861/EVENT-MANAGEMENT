@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { db } from '../config/firebase/firebaseconfig';
 import { collection, addDoc } from 'firebase/firestore';
-import { uploadToCloudinary } from '../config/cloudinary';
 import './CreateEvent.css';
 
 const CreateEvent = () => {
@@ -19,31 +18,20 @@ const CreateEvent = () => {
     price: '',
     totalTickets: '',
     category: 'Technology',
-    image: null
+    image: ''
   });
   const [imagePreview, setImagePreview] = useState(null);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
-  };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({
-        ...formData,
-        image: file
-      });
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+    // Update image preview when image URL changes
+    if (name === 'image') {
+      setImagePreview(value || null);
     }
   };
 
@@ -51,16 +39,13 @@ const CreateEvent = () => {
     e.preventDefault();
 
     if (!formData.title || !formData.description || !formData.date || !formData.time || 
-        !formData.location || !formData.price || !formData.totalTickets || !formData.image) {
-      alert('Please fill in all required fields including event image');
+        !formData.location || !formData.price || !formData.totalTickets) {
+      alert('Please fill in all required fields');
       return;
     }
 
     try {
       setLoading(true);
-
-      // Upload image to Cloudinary
-      const imageUrl = await uploadToCloudinary(formData.image);
 
       const eventData = {
         title: formData.title,
@@ -72,7 +57,7 @@ const CreateEvent = () => {
         totalTickets: parseInt(formData.totalTickets),
         availableTickets: parseInt(formData.totalTickets),
         category: formData.category,
-        image: imageUrl,
+        image: formData.image || 'https://via.placeholder.com/400x200?text=Event+Image',
         createdAt: new Date().toISOString()
       };
 
@@ -237,15 +222,15 @@ const CreateEvent = () => {
 
             <div className="form-group full-width">
               <label>
-                <i className="fas fa-image"></i> Event Image *
+                <i className="fas fa-image"></i> Event Image URL
               </label>
               <input
-                type="file"
+                type="url"
                 name="image"
-                onChange={handleImageChange}
-                accept="image/*"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder="https://example.com/image.jpg"
                 className="form-input"
-                required
               />
               {imagePreview && (
                 <div className="image-preview">
@@ -258,7 +243,7 @@ const CreateEvent = () => {
                   }} />
                 </div>
               )}
-              <small className="form-hint">Upload an image for your event (required)</small>
+              <small className="form-hint">Enter a direct URL to an image (optional)</small>
             </div>
           </div>
 

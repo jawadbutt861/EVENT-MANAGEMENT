@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { db } from '../config/firebase/firebaseconfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { uploadToCloudinary } from '../config/cloudinary';
 import './CreateEvent.css';
 
 const EditEvent = () => {
@@ -21,8 +20,7 @@ const EditEvent = () => {
     price: '',
     totalTickets: '',
     category: 'Technology',
-    image: '',
-    newImage: null
+    image: ''
   });
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -40,8 +38,7 @@ const EditEvent = () => {
           price: data.price.toString(),
           totalTickets: data.totalTickets.toString(),
           category: data.category,
-          image: data.image || '',
-          newImage: null
+          image: data.image || ''
         });
         setImagePreview(data.image || null);
       } else {
@@ -61,40 +58,19 @@ const EditEvent = () => {
   }, [fetchEvent]);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
-  };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        alert('Please select a valid image file');
-        return;
-      }
-
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
-        return;
-      }
-
-      setFormData({
-        ...formData,
-        newImage: file
-      });
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+    // Update image preview when image URL changes
+    if (name === 'image') {
+      setImagePreview(value || null);
     }
   };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -108,21 +84,6 @@ const EditEvent = () => {
     try {
       setLoading(true);
 
-      let imageUrl = formData.image; // Keep existing image by default
-
-      // If new image is uploaded, upload it to Cloudinary
-      if (formData.newImage) {
-        console.log('Uploading new image to Cloudinary...');
-        try {
-          imageUrl = await uploadToCloudinary(formData.newImage);
-          console.log('Image uploaded successfully:', imageUrl);
-        } catch (uploadError) {
-          console.error('Image upload failed:', uploadError);
-          alert(`Failed to upload image: ${uploadError.message}`);
-          return;
-        }
-      }
-
       const eventData = {
         title: formData.title,
         description: formData.description,
@@ -132,11 +93,10 @@ const EditEvent = () => {
         price: parseInt(formData.price),
         totalTickets: parseInt(formData.totalTickets),
         category: formData.category,
-        image: imageUrl,
+        image: formData.image || 'https://via.placeholder.com/400x200?text=Event+Image',
         updatedAt: new Date().toISOString()
       };
 
-      console.log('Updating event with data:', eventData);
       await updateDoc(doc(db, 'events', id), eventData);
       
       alert('Event updated successfully!');
@@ -306,13 +266,14 @@ const EditEvent = () => {
 
             <div className="form-group full-width">
               <label>
-                <i className="fas fa-image"></i> Event Image
+                <i className="fas fa-image"></i> Event Image URL
               </label>
               <input
-                type="file"
-                name="newImage"
-                onChange={handleImageChange}
-                accept="image/*"
+                type="url"
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder="https://example.com/image.jpg"
                 className="form-input"
               />
               {imagePreview && (
@@ -326,7 +287,7 @@ const EditEvent = () => {
                   }} />
                 </div>
               )}
-              <small className="form-hint">Upload a new image to replace the current one (optional)</small>
+              <small className="form-hint">Enter a direct URL to an image (optional)</small>
             </div>
           </div>
 
