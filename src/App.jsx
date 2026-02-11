@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -10,11 +12,16 @@ import Dashboard from './pages/Dashboard';
 import CreateEvent from './pages/CreateEvent';
 import EditEvent from './pages/EditEvent';
 import ManageEvents from './pages/ManageEvents';
+import { USER_ROLES } from './constants';
 import './App.css';
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useAuth();
   return currentUser ? children : <Navigate to="/login" />;
+};
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
 const OrganizerRoute = ({ children }) => {
@@ -24,11 +31,15 @@ const OrganizerRoute = ({ children }) => {
     return <Navigate to="/login" />;
   }
   
-  if (userRole !== 'organizer') {
+  if (userRole !== USER_ROLES.ORGANIZER) {
     return <Navigate to="/" />;
   }
   
   return children;
+};
+
+OrganizerRoute.propTypes = {
+  children: PropTypes.node.isRequired
 };
 
 function AppContent() {
@@ -89,9 +100,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

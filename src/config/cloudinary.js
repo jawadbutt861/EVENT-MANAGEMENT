@@ -1,16 +1,16 @@
 // Cloudinary configuration
 export const cloudinaryConfig = {
-  cloudName: 'dhqctdrhtap',
-  apiKey: '678784814319173',
-  apiSecret: '4M9Jz7VWr4eXbaTuPYSO0VSLun8',
-  uploadPreset: 'event_images' // You'll need to create this in Cloudinary dashboard
+  cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+  apiKey: import.meta.env.VITE_CLOUDINARY_API_KEY,
+  apiSecret: import.meta.env.VITE_CLOUDINARY_API_SECRET,
+  uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
 };
 
 // Function to upload image to Cloudinary
 export const uploadToCloudinary = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'event_images'); // Unsigned upload preset
+  formData.append('upload_preset', cloudinaryConfig.uploadPreset);
   formData.append('cloud_name', cloudinaryConfig.cloudName);
 
   try {
@@ -19,7 +19,7 @@ export const uploadToCloudinary = async (file) => {
       {
         method: 'POST',
         body: formData,
-        mode: 'cors', // Enable CORS
+        mode: 'cors',
         headers: {
           'Accept': 'application/json'
         }
