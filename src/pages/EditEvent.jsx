@@ -70,6 +70,18 @@ const EditEvent = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+
       setFormData({
         ...formData,
         newImage: file
@@ -100,7 +112,15 @@ const EditEvent = () => {
 
       // If new image is uploaded, upload it to Cloudinary
       if (formData.newImage) {
-        imageUrl = await uploadToCloudinary(formData.newImage);
+        console.log('Uploading new image to Cloudinary...');
+        try {
+          imageUrl = await uploadToCloudinary(formData.newImage);
+          console.log('Image uploaded successfully:', imageUrl);
+        } catch (uploadError) {
+          console.error('Image upload failed:', uploadError);
+          alert(`Failed to upload image: ${uploadError.message}`);
+          return;
+        }
       }
 
       const eventData = {
@@ -116,6 +136,7 @@ const EditEvent = () => {
         updatedAt: new Date().toISOString()
       };
 
+      console.log('Updating event with data:', eventData);
       await updateDoc(doc(db, 'events', id), eventData);
       
       alert('Event updated successfully!');
