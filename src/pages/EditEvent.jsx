@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { db, storage } from '../config/firebase/firebaseconfig';
+import { db } from '../config/firebase/firebaseconfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { uploadToCloudinary } from '../config/cloudinary';
 import './CreateEvent.css';
 
 const EditEvent = () => {
@@ -98,11 +98,9 @@ const EditEvent = () => {
 
       let imageUrl = formData.image; // Keep existing image by default
 
-      // If new image is uploaded, upload it to Firebase Storage
+      // If new image is uploaded, upload it to Cloudinary
       if (formData.newImage) {
-        const imageRef = ref(storage, `event-images/${Date.now()}-${formData.newImage.name}`);
-        const imageSnapshot = await uploadBytes(imageRef, formData.newImage);
-        imageUrl = await getDownloadURL(imageSnapshot.ref);
+        imageUrl = await uploadToCloudinary(formData.newImage);
       }
 
       const eventData = {

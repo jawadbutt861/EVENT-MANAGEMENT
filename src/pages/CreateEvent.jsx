@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { db, storage } from '../config/firebase/firebaseconfig';
+import { db } from '../config/firebase/firebaseconfig';
 import { collection, addDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { uploadToCloudinary } from '../config/cloudinary';
 import './CreateEvent.css';
 
 const CreateEvent = () => {
@@ -59,10 +59,8 @@ const CreateEvent = () => {
     try {
       setLoading(true);
 
-      // Upload image to Firebase Storage
-      const imageRef = ref(storage, `event-images/${Date.now()}-${formData.image.name}`);
-      const imageSnapshot = await uploadBytes(imageRef, formData.image);
-      const imageUrl = await getDownloadURL(imageSnapshot.ref);
+      // Upload image to Cloudinary
+      const imageUrl = await uploadToCloudinary(formData.image);
 
       const eventData = {
         title: formData.title,
